@@ -40,7 +40,7 @@ namespace FoosRanking
             }
             else
             {
-                context.ConversationData.SetValue("Message:" + messageNumber, JsonConvert.SerializeObject(context));
+                context.ConversationData.SetValue("Message:" + messageNumber, message.Text);
                 await context.PostAsync($"{messageNumber++}: You said {message.Text}");
                 context.Wait(MessageReceivedAsync);
             }
