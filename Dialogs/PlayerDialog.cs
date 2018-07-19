@@ -7,9 +7,9 @@ using Microsoft.Bot.Builder.Dialogs;
 namespace FoosRanking
 {
     [Serializable]
-    public class EchoDialog : IDialog<object>
+    public class PlayerDialog : IDialog<object>
     {
-        protected int count = 1;
+        protected int messageNumber = 1;
 
         public async Task StartAsync(IDialogContext context)
         {
@@ -25,13 +25,21 @@ namespace FoosRanking
                 PromptDialog.Confirm(
                     context,
                     AfterResetAsync,
-                    "Are you sure you want to reset the count?",
+                    "Are you sure you want to reset the scores?",
                     "Didn't get that!",
                     promptStyle: PromptStyle.Auto);
             }
+            if (message.Text == "scores")
+            {
+                var key = 1;
+                while (context.ConversationData.TryGetValue("Message:" + key++, out string data))
+                    await context.PostAsync($"Message:{key}={data}");
+                context.Wait(MessageReceivedAsync);
+            }
             else
             {
-                await context.PostAsync($"{this.count++}: You said {message.Text}");
+                context.ConversationData.SetValue("Message:" + messageNumber, context.ToString());
+                await context.PostAsync($"{this.messageNumber++}: You said {message.Text}");
                 context.Wait(MessageReceivedAsync);
             }
         }
@@ -41,12 +49,12 @@ namespace FoosRanking
             var confirm = await argument;
             if (confirm)
             {
-                this.count = 1;
-                await context.PostAsync("Reset count.");
+                context.ConversationData.Clear();
+                await context.PostAsync("Reset scores.");
             }
             else
             {
-                await context.PostAsync("Did not reset count.");
+                await context.PostAsync("Did not reset scores.");
             }
             context.Wait(MessageReceivedAsync);
         }
