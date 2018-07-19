@@ -32,7 +32,8 @@ namespace FoosRanking
             if (message.Text == "scores")
             {
                 var key = 1;
-                while (context.ConversationData.TryGetValue("Message:" + key++, out string data))
+                string data;
+                while (context.ConversationData.TryGetValue("Message:" + key++, out data))
                     await context.PostAsync($"Message:{key}={data}");
                 context.Wait(MessageReceivedAsync);
             }
