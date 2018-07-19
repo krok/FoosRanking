@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Builder.Dialogs;
+using Newtonsoft.Json;
 
 
 namespace FoosRanking
@@ -39,8 +40,8 @@ namespace FoosRanking
             }
             else
             {
-                context.ConversationData.SetValue("Message:" + messageNumber, context.ToString());
-                await context.PostAsync($"{this.messageNumber++}: You said {message.Text}");
+                context.ConversationData.SetValue("Message:" + messageNumber, JsonConvert.SerializeObject(context));
+                await context.PostAsync($"{messageNumber++}: You said {message.Text}");
                 context.Wait(MessageReceivedAsync);
             }
         }
